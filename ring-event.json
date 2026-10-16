@@ -1,0 +1,11 @@
+{
+  "event_id": "evt_9082341",
+  "device_id": "ring_doorbell_server_room_01",
+  "timestamp": "2026-10-16T15:00:00Z",
+  "event_type": "motion_ding",
+  "user_claim": {
+    "user_id": "usr_tech_8842",
+    "access_card_id": "card_badge_990",
+    "requested_zone": "Server_Room_Alpha"
+  }
+}
