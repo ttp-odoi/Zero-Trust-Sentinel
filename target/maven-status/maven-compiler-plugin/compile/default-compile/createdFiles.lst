@@ -1,0 +1,8 @@
+com\sentinel\EventQueueProcessor.class
+com\sentinel\HmacValidator.class
+com\sentinel\Main.class
+com\sentinel\PolicyResult.class
+com\sentinel\RingEvent.class
+com\sentinel\UserClaim.class
+com\sentinel\AlexaMcpHandler.class
+com\sentinel\PolicyEngine.class

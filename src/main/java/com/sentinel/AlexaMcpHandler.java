@@ -40,6 +40,7 @@ public class AlexaMcpHandler {
 
     /**
      * Processes an incoming MCP Tool Execution call from Alexa+
+     * and speaks the resulting decision aloud.
      */
     public String handleMcpToolCall(String rawJsonPayload, String providedSignature) {
         ObjectNode responseNode = mapper.createObjectNode();
@@ -47,8 +48,11 @@ public class AlexaMcpHandler {
         try {
             // 1. [S1] HMAC Integrity Check
             if (!HmacValidator.isValidSignature(rawJsonPayload, sharedSecret, providedSignature)) {
+                String errorSpeech = "Security Alert: Access request failed payload signature verification.";
                 responseNode.put("status", "REJECTED");
-                responseNode.put("alexa_speech", "Security Alert: Access request failed payload signature verification.");
+                responseNode.put("alexa_speech", errorSpeech);
+
+                TextToSpeech.speak(errorSpeech);
                 return mapper.writeValueAsString(responseNode);
             }
 
@@ -57,8 +61,11 @@ public class AlexaMcpHandler {
 
             // 3. [D1] Ingest into DoS Queue
             if (!queueProcessor.offerEvent(event)) {
+                String rateLimitSpeech = "System busy: Too many simultaneous entry requests. Please try again.";
                 responseNode.put("status", "RATE_LIMITED");
-                responseNode.put("alexa_speech", "System busy: Too many simultaneous entry requests. Please try again.");
+                responseNode.put("alexa_speech", rateLimitSpeech);
+
+                TextToSpeech.speak(rateLimitSpeech);
                 return mapper.writeValueAsString(responseNode);
             }
 
@@ -77,9 +84,15 @@ public class AlexaMcpHandler {
 
             responseNode.put("alexa_speech", speechOutput);
 
+            // 🔊 Trigger Windows Text-To-Speech Engine
+            TextToSpeech.speak(speechOutput);
+
         } catch (Exception e) {
+            String errSpeech = "An internal error occurred during verification.";
             responseNode.put("status", "ERROR");
-            responseNode.put("alexa_speech", "An internal error occurred during verification.");
+            responseNode.put("alexa_speech", errSpeech);
+
+            TextToSpeech.speak(errSpeech);
         }
 
         try {
